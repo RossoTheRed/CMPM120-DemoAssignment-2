@@ -1,4 +1,4 @@
-A simple adventure game by {who?} based on a simple adventure game engine by [Adam Smith](https://github.com/rndmcnlly).
+A simple adventure game by Serena H based on a simple adventure game engine by [Adam Smith](https://github.com/rndmcnlly).
 
 Code requirements:
 - **4+ scenes based on `AdventureScene`**: unsatisfied (name at least 4 of the classes).
@@ -20,3 +20,6 @@ Asset sources:
 Code sources:
 - `adventure.js` and `index.html` were created for this project [Adam Smith](https://github.com/rndmcnlly) and edited by me.
 - `game.js` was sketched by [Adam Smith](https://github.com/rndmcnlly) and rewritten by me.
+
+## About The Game
+This is a game for my grandparents on Kauai. The gameplay is a small adventure game with simple images, a lot of text, and some simple moving icons. The story takes place at Lydgate Beach Park on Kauai. The story is that you go to the beach with your grandma and you're trying to find all of the fish that live at the beach.
