@@ -1,6 +1,62 @@
+let fishData = {
+    "[numFound]":0,
+    "[knownTotal]": 41,
+    "Racoon Butterflyfish": false,
+    "Bluestripe Butterflyfish": false,
+    "Milletseed Butterflyfish": false,
+    "Stripey Fish": false,
+    "Sergeantmajor Fish": false,
+    "Moorish Idol Fish": false,
+    "Unicornfish": false,
+    "Bluestripe Snapper": false,
+    "Reef Triggerfish": false,
+    "Convict Tang": false,
+    "Yelloweyed Surgeonfish": false,
+    "Eyestripe Surgeonfish": false,
+    "Saddle Wrasse": false,
+    "Belted Wrasse": false,
+    "Hawaiian Cleaner Wrasse": false,
+    "Christmas Wrasse": false,
+    "Bird Wrasse": false,
+    "Spotted Hawkfish": false,
+    "Blue Goatfish": false,
+    "Manybar Goatfish": false,
+    "Spectacled Parrotfish (male)": false,
+    "Spectacled Parrotfish (female)": false,
+    "Hawaiian Flagtail": false,
+    "Grey Damselfish": false,
+    "Rudderfish": false,
+    "Great Barracuda": false,
+    "Bigeye Sead": false,
+    "Pacific Threadfin": false,
+    "Stripped Mullet": false,
+    "Milkfish": false,
+    "Bluefin Trevally": false,
+    "Giant Trevally": false,
+    "Needlefish": false,
+    "Trumpetfish": false,
+    "Flounder": false,
+    "Sea Cucumber": false,
+    "Black Nerite Snail": false,
+    "Black Foot Limpet": false,
+    "Rock Crab": false,
+    "Shingle Urchin": false,
+    "Hawaiian Whitespotted Toby Pufferfish": false,
+    "Green Sea Turtle": false,
+};
+
+
+function findFish(fishFound) {
+    if (fishData[fishFound] != null && fishData[fishFound] == false) {
+        fishData[fishFound] = true;
+        fishData[numFound] += 1;
+    }
+}
+
+
 class Demo1 extends AdventureScene {
     constructor() {
-        super("demo1", "First Room");
+        super("demo1", "First Room",fishData);
     }
 
     onEnter() {

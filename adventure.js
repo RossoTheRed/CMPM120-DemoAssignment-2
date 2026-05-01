@@ -29,10 +29,12 @@ class AdventureScene extends Phaser.Scene {
     /**
      * @param {string} key  A unique Phaser scene key (e.g. `"tunnel"`).
      * @param {string} name A human-readable name shown in the UI (e.g. `"The Tunnel"`).
+     * @param {dictionary} fishList The number of fish found.
      */
-    constructor(key, name) {
+    constructor(key, name, fishList) {
         super(key);
         this.name = name;
+        this.goalData = fishList;
     }
 
     /**
@@ -49,16 +51,91 @@ class AdventureScene extends Phaser.Scene {
         /** @type {number} Game height in scaled pixels (nominally 1080). */
         this.h = this.game.config.height;
         /** @type {number} UI spacing unit in scaled pixels (1% of width). Use multiples of `this.s` for text sizes, margins, etc. */
+
         this.s = this.game.config.width * 0.01;
+        this.strokeWeight = this.s / 2;
+        this.strokeColor = 0x848484; // #6c6c6c
+        this.fillColor = 0xbcbbbb; // #bcbbbb
+
 
         this.cameras.main.setBackgroundColor('#444');
         this.cameras.main.fadeIn(this.transitionDuration, 0, 0, 0);
 
-        this.add.rectangle(this.w * 0.75, 0, this.w * 0.25, this.h).setOrigin(0, 0).setFillStyle(0);
-        this.add.text(this.w * 0.75 + this.s, this.s)
+        // Title box
+        this.titleBox = this.add.rectangle(this.w * 0.75, 0 + this.strokeWeight/2, this.w * 0.25, this.h/8).setOrigin(0, 0).setFillStyle(this.fillColor).setStrokeStyle(this.strokeWeight, this.strokeColor);
+        this.add.text(this.w * 0.75 + this.s, this.s + this.titleBox.height/4)
             .setText(this.name)
             .setStyle({ fontSize: `${3 * this.s}px` })
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
+
+        // Objective Box
+        this.goalBox = this.add.rectangle(this.w * 0.75, this.titleBox.y + this.h/8, this.w * 0.25, this.h/8).setOrigin(0, 0).setFillStyle(this.fillColor).setStrokeStyle(this.strokeWeight, this.strokeColor);
+        this.add.text(this.w * 0.75 + this.s, this.s + this.goalBox.height)
+            .setText(`Goal: Find All The Fish! [${this.goalData["numFound"]}/${this.goalData["knownTotal"]}]`)
+            .setStyle({ fontSize: `${2 * this.s}px` })
+            .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
+
+        // "Inventory" box
+        this.invBox = this.add.rectangle(this.w * 0.75, this.goalBox.y + this.h/8, this.w * 0.25, this.h*0.74).setOrigin(0, 0).setFillStyle(this.fillColor).setStrokeStyle(this.strokeWeight, this.strokeColor);
+        this.listTitle = this.add.text(this.w * 0.75 + this.s, this.s + this.invBox.y)
+            .setText("Fish List")
+            .setStyle({ fontSize: `${3 * this.s}px`})
+            .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
+        this.listText = this.add.text(this.w * 0.75 + this.s, this.listTitle.y + this.listTitle.height)
+            let totalText = "";
+            for (let [fish, found] of Object.entries(this.goalData)) {
+                if (fish.includes("[") == false) {
+                    if (found == true) {
+                        totalText += `[x]`;
+                    } else {
+                        totalText += `[ ]`;
+                    }
+                    totalText += `${fish}\n`
+                }
+            }
+
+            this.listText.setText(totalText)
+            .setStyle({ fontSize: `${1.5 * this.s}px` })
+            .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
+            .setInteractive({cursor: "ns-resize"})
+            .on("wheel", function (pointer,deltaX,deltaY,deltaZ) {
+                this.y -= deltaY;
+                console.log(this.y)
+                if (this.y < -245) {
+                    this.y = -245;
+                } else if (this.y > 360) {
+                    this.y = 360;
+                }
+                // Phaser.Math.Clamp(this.y,360,245);
+            });
+
+        
+
+        /*this.invScrollBar = this.add.container(this.invBox.x, this.invBox.y + this.invBox.height / 4);
+        this.barBG = this.add.rectangle(this.invBox.width - (this.w * 0.01),this.invBox.height/4, this.w * 0.02, this.invBox.height).setFillStyle(this.fillColor).setStrokeStyle(this.strokeWeight, this.strokeColor);
+        this.bar = this.add.rectangle(this.invBox.width - (this.w * 0.01),0, this.w * 0.02, this.invBox.height/8).setFillStyle(this.strokeColor);
+        this.invScrollBar.add([this.barBG,this.bar]);
+        this.bar.y -= this.bar.height*1.5;
+        this.bar.homeY = 0;
+        console.log(this.barBG.y);
+        console.log(this.bar.homeY);
+        this.bar.bottomY = this.listText.height/this.barBG.height;
+        this.bar.setInteractive({
+            useHandCursor: true,
+            draggable: true
+        });
+        this.bar.on("drag", (pointer) => {
+            this.bar.y += (pointer.velocity.y /5);
+            Phaser.Math.Clamp(this.bar.y,-150,300);
+            console.log(this.bar.y);
+        });
+        this.bar.on("dragend", (pointer) => {
+            if (this.bar.y < this.bar.bottomY) {
+                this.bar.y = this.bar.bottomY
+            }
+        });*/ // No time for dat. Will fix later
+
+
 
         this.messageBox = this.add.text(this.w * 0.75 + this.s, this.h * 0.33)
             .setStyle({ fontSize: `${2 * this.s}px`, color: '#eea' })
