@@ -45,6 +45,23 @@ let fishData = {
     "Green Sea Turtle": false,
 };
 
+let dialogue = [
+    "Grandma stops you to say something\n\"We have to leave at 4 to make dinner, okay? Don't go past the bathrooms where I can't see you. Love you, baby.\"",
+    "The soft sand is warm, bordering on hot, but that's okay because you're about to get back in the water. Grandma is sunbathing near on her towel. She probably won't notice if you go past the bathrooms.",
+
+];
+
+let choices = [
+    ["\"Let's go!\"","Go to [Shore]"],
+    ["Continue",null],
+    ["Back", null],
+    ["Sneak past into the park","Go to [The Park]"],
+    ["Go to the water", "Go to [The Shallow]"],
+    ["Talk to grandma", "Check the time"],
+    ["Check the board", "Go to [The Fish Board]"],
+    ["Swim deeper", "Do nothing"],
+    ["Placeholder","Do nothing"],
+]
 
 function findFish(fishFound) {
     if (fishData[fishFound] != null && fishData[fishFound] == false) {
@@ -53,111 +70,151 @@ function findFish(fishFound) {
     }
 }
 
+let choiceFillColor = 0xb2f6a9; // #b2f6a9
+let choiceStrokeColor = 0x0097a7; // #0097a7
+let infoFillColor = 0x90b8ec; // #90b8ec
+let infoStrokeColor = 0x4285f4; // #4285f4
 
-class Demo1 extends AdventureScene {
+function makeChoiceBox(scope, mainText,action = [callback,callbackArgs,hoverText], x, y, BGColor, strokeColor, textData = { textStyle: "normal", textColor: 0x000001, textSize: this.s * 2, textAlignment: "center", textWrapLength: mainText.width / 2/*, textFont: null*/ }) {
+    let node = scope.add.container(x, y);
+
+    let nodeText = scope.add.text(0, 0, mainText)
+        .setFontSize(textData["textSize"])
+        .setColor(textData["textColor"])
+        .setWordWrapWidth(textData["textWrapLength"])
+        .setAlign(textData["textAlignment"])
+        //.setFont(textData["textFont"])
+        .setStyle(textData["textStyle"])
+        
+    if (action != null && action.length == 3) {
+        nodeText.setInteractive({ useHandCursor: true })
+        .on('pointerover', () => scope.showMessage(action[2]))
+        .on('pointerdown', () => {
+            console.log(action)
+            action[0].call(scope,action[1]);
+            // scope.gotoScene(action[1]);
+        });
+    }
+        
+
+    scope.graphics = scope.add.graphics();
+    scope.graphics.fillStyle(BGColor, 1);
+    let BGPadding = 20;
+    let nodeBG = scope.graphics.fillRoundedRect(-BGPadding / 2, -BGPadding / 2, nodeText.width + BGPadding, nodeText.height + BGPadding);
+    // Later!
+    //scope.graphics.fillStyle(strokeColor, 1);
+    //scope.graphics.strokeRoundedRect(x, y, nodeBG.width, nodeBG.height);
+
+    node.add([nodeBG, nodeText]);
+    node.x = x - nodeText.width / 2;
+    node.y = y - nodeText.height / 2;
+    return (node);
+}
+
+function makeInfoBox(scope, mainText, x, y, BGColor, strokeColor, textData = { textStyle: "normal",textColor: 0xFFFFFF, textSize: this.s*2, textAlignment: "center", textWrapLength: mainText.width/2/*, textFont: null*/ }) {
+    let node = scope.add.container(x, y);
+
+    let nodeText = scope.add.text(0, 0, mainText)
+        .setFontSize(textData["textSize"])
+        .setColor(textData["textColor"])
+        .setWordWrapWidth(textData["textWrapLength"])
+        .setAlign(textData["textAlignment"])
+        //.setFont(textData["textFont"])
+        .setStyle(textData["textStyle"]);
+
+    scope.graphics = scope.add.graphics();
+    scope.graphics.fillStyle(BGColor, 1);
+    let BGPadding = 80;
+    let nodeBG = scope.graphics.fillRoundedRect(-BGPadding/2, -BGPadding/2, nodeText.width + BGPadding, nodeText.height + BGPadding);
+    // Later!
+    //scope.graphics.fillStyle(strokeColor, 1);
+    //scope.graphics.strokeRoundedRect(x, y, nodeBG.width, nodeBG.height);
+
+    node.add([nodeBG, nodeText]);
+    node.x = x - nodeText.width/2;
+    node.y = y - nodeText.height/2;
+    return (node);
+}
+
+class FishBoard extends AdventureScene {
     constructor() {
-        super("demo1", "First Room",fishData);
+        super("fishBoard", "The Fish Board",fishData);
+    }
+
+    preload() {
+        this.load.path = "assets/";
+
+        this.load.image("fishBoard","FishBoard.png");
     }
 
     onEnter() {
 
-        let clip = this.add.text(this.w * 0.3, this.w * 0.3, "📎 paperclip")
-            .setFontSize(this.s * 2)
-            .setInteractive()
-            .on('pointerover', () => this.showMessage("Metal, bent."))
-            .on('pointerdown', () => {
-                this.showMessage("No touching!");
-                this.tweens.add({
-                    targets: clip,
-                    x: '+=' + this.s,
-                    repeat: 2,
-                    yoyo: true,
-                    ease: 'Sine.inOut',
-                    duration: 100
-                });
-            });
+        this.bg = this.add.image(this.w/2-this.w/7,this.h/2,"fishBoard");
+        this.bg.setScale(3);
 
-        let key = this.add.text(this.w * 0.5, this.w * 0.1, "🔑 key")
-            .setFontSize(this.s * 2)
-            .setInteractive()
-            .on('pointerover', () => {
-                this.showMessage("It's a nice key.")
-            })
-            .on('pointerdown', () => {
-                this.showMessage("You pick up the key.");
-                this.gainItem('key');
-                this.tweens.add({
-                    targets: key,
-                    y: `-=${2 * this.s}`,
-                    alpha: { from: 1, to: 0 },
-                    duration: 500,
-                    onComplete: () => key.destroy()
-                });
-            })
+        let node = makeChoiceBox(this, choices[0][0], [this.gotoScene,"shore",choices[0][1]], this.w / 10, this.h / 1.1, choiceFillColor, choiceStrokeColor, { textStyle: "italic", textColor: 0xFFFFFF, textSize: this.s * 2, textAlignment: "center", textWrapLength: 50 * this.s });
+    }
 
-        let door = this.add.text(this.w * 0.1, this.w * 0.15, "🚪 locked door")
-            .setFontSize(this.s * 2)
-            .setInteractive()
-            .on('pointerover', () => {
-                if (this.hasItem("key")) {
-                    this.showMessage("You've got the key for this door.");
-                } else {
-                    this.showMessage("It's locked. Can you find a key?");
-                }
-            })
-            .on('pointerdown', () => {
-                if (this.hasItem("key")) {
-                    this.loseItem("key");
-                    this.showMessage("*squeak*");
-                    door.setText("🚪 unlocked door");
-                    this.gotoScene('demo2');
-                }
-            })
-
+    update() {
+        /*let pointer = this.input.activePointer;
+        console.log(`(${Math.trunc(pointer.x)},${Math.trunc(pointer.y)})`);*/
     }
 }
 
-class Demo2 extends AdventureScene {
+class Intro extends AdventureScene {
     constructor() {
-        super("demo2", "The second room has a long name (it truly does).");
+        super("intro", "The Shore", fishData);
     }
+
+    preload() {
+        this.load.path = "assets/";
+
+        this.load.image("theShore", "BeachView1.png");
+    }
+
     onEnter() {
-        this.add.text(this.w * 0.3, this.w * 0.4, "just go back")
-            .setFontSize(this.s * 2)
-            .setInteractive()
-            .on('pointerover', () => {
-                this.showMessage("You've got no other choice, really.");
-            })
-            .on('pointerdown', () => {
-                this.gotoScene('demo1');
-            });
+        this.bg = this.add.image(this.w / 2 - this.w / 7, this.h / 2, "theShore");
+        this.bg.setScale(2);
+        this.bg.setDepth(-1);
 
-        let finish = this.add.text(this.w * 0.6, this.w * 0.2, '(finish the game)')
-            .setInteractive()
-            .on('pointerover', () => {
-                this.showMessage('*giggles*');
-                this.tweens.add({
-                    targets: finish,
-                    x: this.s + (this.h - 2 * this.s) * Math.random(),
-                    y: this.s + (this.h - 2 * this.s) * Math.random(),
-                    ease: 'Sine.inOut',
-                    duration: 500
-                });
-            })
-            .on('pointerdown', () => this.gotoScene('outro'));
+        makeChoiceBox(this, dialogue[0] + "\n\nPeriodically check in with Grandma to keep track of time.\nThe current time is 12pm",this.viewCenter.x,this.viewCenter.y*0.75,infoFillColor,infoStrokeColor, { textStyle: "italic", textColor: 0xFFFFFF, textSize: this.s * 2.5, textAlignment: "center", textWrapLength: 50*this.s});
+
+        makeChoiceBox(this, choices[1][0], choices[0][1], "shore", this.viewCenter.x, this.viewCenter.y*1.5, choiceFillColor, choiceStrokeColor, { textStyle: "italic", textColor: 0xFFFFFF, textSize: this.s * 2, textAlignment: "center", textWrapLength: 50 * this.s });
     }
 }
 
-class Intro extends Phaser.Scene {
+class Shore extends AdventureScene {
     constructor() {
-        super('intro')
+        super("shore", "The Shore", fishData);
+    }
+
+    preload() {
+        this.load.path = "assets/";
+
+        this.load.image("theShore", "BeachView1.png");
+    }
+
+    onEnter() {
+        this.bg = this.add.image(this.w / 2 - this.w / 7, this.h / 2, "theShore");
+        this.bg.setScale(2);
+        this.bg.setDepth(-1);
+
+        makeInfoBox(this, dialogue[0] + "\n\nPeriodically check in with Grandma to keep track of time.\nThe current time is 12pm", this.viewCenter.x, this.viewCenter.y * 0.75, infoFillColor, infoStrokeColor, { textStyle: "italic", textColor: 0xFFFFFF, textSize: this.s * 2.5, textAlignment: "center", textWrapLength: 50 * this.s });
+
+        makeChoiceBox(this, choices[1][0], choices[0][1], "shore", this.viewCenter.x, this.viewCenter.y * 1.5, choiceFillColor, choiceStrokeColor, { textStyle: "italic", textColor: 0xFFFFFF, textSize: this.s * 2, textAlignment: "center", textWrapLength: 50 * this.s });
+    }
+}
+
+class TitleScreen extends Phaser.Scene {
+    constructor() {
+        super('titleScreen')
     }
     create() {
         this.add.text(50,50, "Adventure awaits!").setFontSize(50);
         this.add.text(50,100, "Click anywhere to begin.").setFontSize(20);
         this.input.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0,0,0);
-            this.time.delayedCall(1000, () => this.scene.start('demo1'));
+            this.time.delayedCall(1000, () => this.scene.start("fishBoard"));
         });
     }
 }
@@ -173,6 +230,28 @@ class Outro extends Phaser.Scene {
     }
 }
 
+/*
+class Template extends AdventureScene {
+    constructor() {
+        super("template", "Empty Room",fishData);
+    }
+
+    preload() {
+        this.load.path = "assets/";
+    }
+
+    onEnter() {
+
+        let node = this.add.text(this.w * 0.3, this.w * 0.3, "Placeholder")
+            .setFontSize(this.s * 2)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("Placeholder"))
+            .on('pointerdown', () => {
+                this.gotoScene("gameStart");
+            });
+    }
+}
+*/
 
 const game = new Phaser.Game({
     scale: {
@@ -181,7 +260,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Intro, Demo1, Demo2, Outro],
+    scene: [TitleScreen, Intro, FishBoard, Shore, Outro],
     title: "Adventure Game",
 });
 

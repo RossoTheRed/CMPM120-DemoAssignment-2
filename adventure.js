@@ -52,34 +52,55 @@ class AdventureScene extends Phaser.Scene {
         this.h = this.game.config.height;
         /** @type {number} UI spacing unit in scaled pixels (1% of width). Use multiples of `this.s` for text sizes, margins, etc. */
 
+        // this.bg = this.add.image(0,0,`${this.constructor.name}`);
+        // this.bg.setOrigin(0,0);
+        // // this.bg.width = 480;
+        // // this.bg.height = 270;
+        // this.bg.setScale(2);
+        // this.bg.x = -this.bg.width/2;
+        // this.bg.y = -this.bg.height/2;
+
         this.s = this.game.config.width * 0.01;
         this.strokeWeight = this.s / 2;
         this.strokeColor = 0x848484; // #6c6c6c
         this.fillColor = 0xbcbbbb; // #bcbbbb
+        this.textColor = 0x000001; // #000001
+
+        this.viewCenter = { x: this.w / 2 - this.w / 8, y: this.h / 2 };
+
 
 
         this.cameras.main.setBackgroundColor('#444');
         this.cameras.main.fadeIn(this.transitionDuration, 0, 0, 0);
 
         // Title box
-        this.titleBox = this.add.rectangle(this.w * 0.75, 0 + this.strokeWeight/2, this.w * 0.25, this.h/8).setOrigin(0, 0).setFillStyle(this.fillColor).setStrokeStyle(this.strokeWeight, this.strokeColor);
-        this.add.text(this.w * 0.75 + this.s, this.s + this.titleBox.height/4)
+        this.titleBox = this.add.rectangle(this.w * 0.75, 0 + this.strokeWeight/2, this.w * 0.25, this.h/8)
+            .setOrigin(0, 0)
+            .setFillStyle(this.fillColor)
+            .setStrokeStyle(this.strokeWeight, this.strokeColor);
+        this.add.text(this.w * 0.75 + this.s, this.s)
             .setText(this.name)
-            .setStyle({ fontSize: `${3 * this.s}px` })
+            .setStyle({ fontSize: `${3 * this.s}px`, color: this.textColor })
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
 
         // Objective Box
-        this.goalBox = this.add.rectangle(this.w * 0.75, this.titleBox.y + this.h/8, this.w * 0.25, this.h/8).setOrigin(0, 0).setFillStyle(this.fillColor).setStrokeStyle(this.strokeWeight, this.strokeColor);
+        this.goalBox = this.add.rectangle(this.w * 0.75, this.titleBox.y + this.h/8, this.w * 0.25, this.h/8)
+            .setOrigin(0, 0)
+            .setFillStyle(this.fillColor)
+            .setStrokeStyle(this.strokeWeight, this.strokeColor);
         this.add.text(this.w * 0.75 + this.s, this.s + this.goalBox.height)
-            .setText(`Goal: Find All The Fish! [${this.goalData["numFound"]}/${this.goalData["knownTotal"]}]`)
-            .setStyle({ fontSize: `${2 * this.s}px` })
+            .setText(`Goal: Find All The Fish! [${this.goalData["[numFound]"]}/${this.goalData["[knownTotal]"]}]`)
+            .setStyle({ fontSize: `${2 * this.s}px`, color: this.textColor })
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
 
         // "Inventory" box
-        this.invBox = this.add.rectangle(this.w * 0.75, this.goalBox.y + this.h/8, this.w * 0.25, this.h*0.74).setOrigin(0, 0).setFillStyle(this.fillColor).setStrokeStyle(this.strokeWeight, this.strokeColor);
+        this.invBox = this.add.rectangle(this.w * 0.75, this.goalBox.y + this.h/8, this.w * 0.25, this.h*0.74)
+            .setOrigin(0, 0)
+            .setFillStyle(this.fillColor)
+            .setStrokeStyle(this.strokeWeight, this.strokeColor);
         this.listTitle = this.add.text(this.w * 0.75 + this.s, this.s + this.invBox.y)
             .setText("Fish List")
-            .setStyle({ fontSize: `${3 * this.s}px`})
+            .setStyle({ fontSize: `${3 * this.s}px`, color: this.textColor})
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
         this.listText = this.add.text(this.w * 0.75 + this.s, this.listTitle.y + this.listTitle.height)
             let totalText = "";
@@ -95,18 +116,19 @@ class AdventureScene extends Phaser.Scene {
             }
 
             this.listText.setText(totalText)
-            .setStyle({ fontSize: `${1.5 * this.s}px` })
+            .setStyle({ fontSize: `${1.5 * this.s}px`, color: this.textColor})
+            .setColor(this.textColor)
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
             .setInteractive({cursor: "ns-resize"})
             .on("wheel", function (pointer,deltaX,deltaY,deltaZ) {
                 this.y -= deltaY;
-                console.log(this.y)
+
                 if (this.y < -245) {
                     this.y = -245;
                 } else if (this.y > 360) {
                     this.y = 360;
                 }
-                // Phaser.Math.Clamp(this.y,360,245);
+                // Phaser.Math.Clamp(this.y,360,-245);
             });
 
         
