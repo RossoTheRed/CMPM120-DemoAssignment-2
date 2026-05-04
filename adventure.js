@@ -114,19 +114,19 @@ class AdventureScene extends Phaser.Scene {
             .setDepth(10);;
         this.listText = this.add.text(this.w * 0.75 + this.s, this.listTitle.y + this.listTitle.height)
             .setDepth(10);
-            // let totalText = "";
-            // for (let [fish, found] of Object.entries(this.goalData)) {
-            //     if (fish.includes("[") == false) {
-            //         if (found == true) {
-            //             totalText += `[x]`;
-            //         } else {
-            //             totalText += `[ ]`;
-            //         }
-            //         totalText += `${fish}\n`
-            //     }
-            // }
+            let totalText = "";
+            for (let [fish, found] of Object.entries(this.goalData)) {
+                if (fish.includes("[") == false) {
+                    if (found == true) {
+                        totalText += `[x]`;
+                    } else {
+                        totalText += `[ ]`;
+                    }
+                    totalText += `${fish}\n`
+                }
+            }
 
-        this.listText.setText("Check the board!")
+        this.listText.setText(totalText)
             .setStyle({ fontSize: `${1.5 * this.s}px`, color: this.textColor})
             .setColor(this.textColor)
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
@@ -327,7 +327,6 @@ class AdventureScene extends Phaser.Scene {
         this.time.delayedCall(this.transitionDuration, () => {
             this.scene.start(key, { inventory: this.inventory });
         });
-        totalTime += this.curTime;
     }
 
     /**

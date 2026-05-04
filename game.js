@@ -1,7 +1,7 @@
 let fishList = {
     "[numFound]":0,
     "[knownTotal]": 41,
-    "testFish": false,
+    "[testFish]": false,
     "Raccoon Butterflyfish": false,
     "Bluestripe Butterflyfish": false,
     "Milletseed Butterflyfish": false,
@@ -234,16 +234,15 @@ class FishBoard extends AdventureScene {
         this.load.path = "assets/";
 
         this.load.image("fishBoard","FishBoard.png");
-
-        this.findFish("");
     }
 
     onEnter() {
 
         this.bg = this.add.image(this.w/2-this.w/7,this.h/2,"fishBoard");
         this.bg.setScale(3);
+        this.bg.setDepth(-1);
 
-        let node = makeBox(this, choices[0][0], this.w / 10, this.h / 1.1, choiceFillColor, choiceStrokeColor, {callback: this.gotoScene, cbArgs: "shore", cbScope:this, hoverText: choices[0][1]}, { textStyle: "italic", textColor: 0xFFFFFF, textSize: this.s * 2, textAlignment: "center", textWrapLength: 50 * this.s });
+        let node = makeBox(this, "Back", this.w / 10, this.h / 1.1, {callback: this.gotoScene, cbArgs: "shore", cbScope: this, hoverText: "Go to [The Shore]"});
 
         findFish(this,"");
     }
