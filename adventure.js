@@ -78,32 +78,39 @@ class AdventureScene extends Phaser.Scene {
         this.titleBox = this.add.rectangle(this.w * 0.75, 0 + this.strokeWeight/2, this.w * 0.25, this.h/8)
             .setOrigin(0, 0)
             .setFillStyle(this.fillColor)
-            .setStrokeStyle(this.strokeWeight, this.strokeColor);
+            .setStrokeStyle(this.strokeWeight, this.strokeColor)
+            .setDepth(10);
         this.add.text(this.w * 0.75 + this.s, this.s)
             .setText(this.name)
             .setStyle({ fontSize: `${3 * this.s}px`, color: this.textColor })
-            .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
+            .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
+            .setDepth(10);;
 
         // Objective Box
         this.goalBox = this.add.rectangle(this.w * 0.75, this.titleBox.y + this.h/8, this.w * 0.25, this.h/8)
             .setOrigin(0, 0)
             .setFillStyle(this.fillColor)
-            .setStrokeStyle(this.strokeWeight, this.strokeColor);
+            .setStrokeStyle(this.strokeWeight, this.strokeColor)
+            .setDepth(10);;
         this.add.text(this.w * 0.75 + this.s, this.s + this.goalBox.height)
             .setText(`Goal: Find All The Fish! [${this.goalData["[numFound]"]}/${this.goalData["[knownTotal]"]}]`)
             .setStyle({ fontSize: `${2 * this.s}px`, color: this.textColor })
-            .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
+            .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
+            .setDepth(10);;
 
         // "Inventory" box
         this.invBox = this.add.rectangle(this.w * 0.75, this.goalBox.y + this.h/8, this.w * 0.25, this.h*0.74)
             .setOrigin(0, 0)
             .setFillStyle(this.fillColor)
-            .setStrokeStyle(this.strokeWeight, this.strokeColor);
+            .setStrokeStyle(this.strokeWeight, this.strokeColor)
+            .setDepth(10);;
         this.listTitle = this.add.text(this.w * 0.75 + this.s, this.s + this.invBox.y)
             .setText("Fish List")
             .setStyle({ fontSize: `${3 * this.s}px`, color: this.textColor})
-            .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
+            .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
+            .setDepth(10);;
         this.listText = this.add.text(this.w * 0.75 + this.s, this.listTitle.y + this.listTitle.height)
+            .setDepth(10);
             // let totalText = "";
             // for (let [fish, found] of Object.entries(this.goalData)) {
             //     if (fish.includes("[") == false) {
@@ -130,7 +137,8 @@ class AdventureScene extends Phaser.Scene {
                     this.y = 360;
                 }
                 // Phaser.Math.Clamp(this.y,360,-245);
-            });
+            })
+            .setDepth(10);;
 
         
 

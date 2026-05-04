@@ -88,7 +88,7 @@ function findFish(scope,fishFound) {
 }
 
 function makeFish(scope, image, x1, y1, x2, y2, speedX, speedY) {
-    let fish = scope.add.image(Phaser.Math.Between(x1 / 2, x1 * 1.5), Phaser.Math.Between(y1 / 2, y1 * 1.5), image);
+    let fish = scope.add.image(Phaser.Math.Between(x1*0.75, x1 * 1.25), Phaser.Math.Between(y1*0.9, y1 * 1.1), image);
     fish.setInteractive({ useHandCursor: true });
     fish.on("pointerup", () => {
         findFish(scope, image);
@@ -96,9 +96,9 @@ function makeFish(scope, image, x1, y1, x2, y2, speedX, speedY) {
 
     scope.tweens.add({
         targets: fish,
-        x: Phaser.Math.Between(x2/2,x2*1.5),
+        x: Phaser.Math.Between(x2*0.75,x2*1.25),
         flipX: true,
-        duration: speedX,
+        duration: Phaser.Math.Between(speedX * 0.9, speedX * 1.1),
         ease: "Sine.InOut",
         repeat: -1,
         yoyo: true,
@@ -106,8 +106,8 @@ function makeFish(scope, image, x1, y1, x2, y2, speedX, speedY) {
 
     scope.tweens.add({
         targets: fish,
-        y: Phaser.Math.Between(y2/2,y2*1.5),
-        duration: speedY,
+        y: Phaser.Math.Between(y2*0.9,y2*1.1),
+        duration: Phaser.Math.Between(speedY * 0.9, speedY * 1.1),
         ease: "Sine.InOut",
         repeat: -1,
         yoyo: true,
@@ -297,15 +297,15 @@ class Shallow_dive extends AdventureScene {
         this.load.image("UnderwaterShallow", "UnderwaterShallow.png");
         this.load.image("testFish","fish/TestFish.png");
         this.localFish = {
-            "Raccoon Butterflyfish": [400, 300, 0, 0, 2000, 1200, 0.5],
-            "Milletseed Butterflyfish": [400, 300, 0, 0, 2000, 1200, 0.3],
-            "Bluestripe Butterflyfish": [400, 300, 0, 0, 2000, 1200, 0.5],
-            "Mamo": [400, 300, 0, 0, 2000, 1200, 0.25],
-            "Eyestripe Surgeonfish": [400, 300, 0, 0, 2000, 1200, 0.2],
-            "Hawaiian Flagtail": [400, 300, 0, 0, 2000, 1200, 0.05],
-            "Rudderfish": [400, 300, 0, 0, 2000, 1200, 0.5],
-            "Reef Triggerfish": [400, 300, 0, 0, 2000, 1200, 1],
-            "Unicornfish": [400, 300, 0, 0, 2000, 1200, 0.5],
+            "Raccoon Butterflyfish": [1200, 600, 200, 200, 4500, 5000, 0.5],
+            "Milletseed Butterflyfish": [1200, 600, 200, 200, 3500, 5000, 0.3],
+            "Bluestripe Butterflyfish": [1200, 600, 200, 200, 4000, 5000, 0.5],
+            "Mamo": [800, 300, 400, 600, 2000, 5000, 0.25],
+            "Eyestripe Surgeonfish": [1200, 300, 600, 800, 2000, 5000, 0.2],
+            "Hawaiian Flagtail": [1400, 300, 200, 0, 2000, 5000, 0.05],
+            "Rudderfish": [700, 600, 400, 900, 2000, 5000, 0.5],
+            "Reef Triggerfish": [1600, 1000, -400, 1200, 5000, 9000, 0.75],
+            "Unicornfish": [1400, 300, 200, 750, 2000, 5000, 0.5],
             //"FishName": [startX (Approx), startY (Approx), endX (Approx), endY (Approx), speedX, speedY, scale]
         }
 
@@ -324,8 +324,6 @@ class Shallow_dive extends AdventureScene {
     }
 
     onEnter() {
-
-        
         this.bg = this.add.image(this.viewCenter.X, this.viewCenter.y*0.75, "UnderwaterShallow");
         this.bg.setScale(6);
         this.bg.setDepth(-1);
@@ -369,7 +367,7 @@ class Shallow_dive extends AdventureScene {
 
     update() {
         //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
-        //this.debugText.text = `Y: ${Math.trunc(this.fish.y)} | Alpha: ${this.fish.alpha}`;
+        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
 
     }
 }
