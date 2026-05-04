@@ -49,15 +49,27 @@ let fishList = {
 let masterFishData = {
     "Reef Triggerfish": [1600, 1000, -400, 1200, 5000, 9000, 0.75],
     "Milletseed Butterflyfish": [1200, 600, 200, 200, 3500, 5000, 0.3],
+    "Moorish Idol": [1200, 600, 200, 200, 3500, 5000, 0.3],
+    "Whitespotted Toby": [1200, 600, 200, 200, 3500, 5000, 0.3],
     "Raccoon Butterflyfish": [1200, 600, 200, 200, 4500, 5000, 0.5],
     "Bluestripe Butterflyfish": [1200, 600, 200, 200, 4000, 5000, 0.5],
+    "Stripey": [1200, 600, 200, 200, 4000, 5000, 0.5],
     "Mamo": [800, 300, 400, 600, 2000, 5000, 0.25],
+    "Needlefish": [800, 300, 400, 600, 2000, 5000, 1],
+    "Trumpetfish": [800, 300, 400, 600, 2000, 5000, 1],
     "Eyestripe Surgeonfish": [1200, 300, 600, 800, 2000, 5000, 0.2],
     "Hawaiian Flagtail": [1400, 300, 200, 0, 2000, 5000, 0.05],
+    "Christmas Wrasse": [1400, 300, 200, 0, 2000, 5000, 0.2],
+    "Cleaner Wrasse": [1400, 300, 200, 0, 2000, 5000, 0.2],
+    "Bird Wrasse": [1400, 800, 200, 500, 2000, 5000, 0.2],
+    "Belted Wrasse": [1400, 700, 200, 300, 2000, 5000, 0.2],
+    "Spotted Hawkfish": [1400, 300, 200, 0, 2000, 5000, 0.05],
     "Rudderfish": [700, 600, 400, 900, 2000, 5000, 0.5],
     "Unicornfish": [1400, 300, 200, 750, 2000, 5000, 0.5],
     "Spectacled Parrotfish (male)": [1400, 300, 200, 750, 2000, 5000, 1.1],
     "Spectacled Parrotfish (female)": [1400, 300, 200, 750, 2000, 5000, 1.25],
+    "Blue Goatfish": [1400, 300, 200, 750, 2000, 5000, 1.1],
+    "Manybar Goatfish": [1400, 300, 200, 750, 2000, 5000, 0.2],
     "Grey Damselfish": [1400, 300, 200, 750, 2000, 5000, 0.2],
     "Yelloweyed Surgeonfish": [1400, 300, 200, 750, 2000, 5000, 0.25],
     "Bluestripe Snapper": [1400, 300, 200, 750, 2000, 5000, 1],
@@ -70,6 +82,8 @@ let masterFishData = {
 let dialogue = [
     "Grandma stops you to say something\n\"We have to leave at 4 to make dinner, okay? Don't go past the bathrooms where I can't see you. Love you, baby.\"",
     "The soft sand is warm, bordering on hot, but that's okay because you're about to get back in the water. Grandma is sunbathing near on her towel. She probably won't notice if you go past the bathrooms.",
+    "You walk up to grandma to ask the time.\n\"It's just about ",
+    "\"Okay honey, let's go home then. How about we make some saimin for dinner?\"\n\"Yaaay!\""
 ];
 
 let gameState = {
@@ -80,10 +94,10 @@ let choices = [
     ["\"Let's go!\"","Go to [Shore]"],
     ["Continue",null],
     ["Back", null],
-    ["Sneak past into the park","Go to [The Park]"],
-    ["Go to the water", "Go to [The Shallow]"],
-    ["Talk to grandma", "Check the time"],
-    ["Check the board", "Go to [The Board]"],
+    
+    
+    
+    
     ["Swim deeper", "Do nothing"],
     ["Placeholder","Do nothing"],
 ]
@@ -220,6 +234,8 @@ class FishBoard extends AdventureScene {
         this.load.path = "assets/";
 
         this.load.image("fishBoard","FishBoard.png");
+
+        this.findFish("");
     }
 
     onEnter() {
@@ -265,19 +281,22 @@ class Shore extends AdventureScene {
             }
 
             introText.add([
-                makeBox(this, dialogue[0] + "\n\nPeriodically check in with Grandma to keep track of time.\nThe current time is 12pm", this.viewCenter.x, this.viewCenter.y * 0.75),
+                makeBox(this, dialogue[0], this.viewCenter.x, this.viewCenter.y * 0.75),
                 makeBox(this, choices[1][0], this.viewCenter.x, this.viewCenter.y * 1.5, { callback: viewIntro, cbScope: this, hoverText: choices[0][1] })
             ]);
+        } else if (gameState["talking"] == false) {
+            makeBox(this, dialogue[2] + this.checkTime(), this.viewCenter.x, this.viewCenter.y * 0.75),
+                makeBox(this, choices[1][0], this.viewCenter.x, this.viewCenter.y * 1.5, { callback: viewIntro, cbScope: this, hoverText: "continue" });
         } else {
             makeBox(this, dialogue[1], this.viewCenter.x, this.viewCenter.y * 0.5);
 
-            makeBox(this, choices[4][0], this.viewCenter.x, this.viewCenter.y * 1, { callback: this.gotoScene, cbArgs: "shallow", cbScope: this, hoverText: "Test" });
+            makeBox(this, "Go to the water", this.viewCenter.x, this.viewCenter.y * 1, { callback: this.gotoScene, cbArgs: "shallow", cbScope: this, hoverText: "Go to [The Shallow]" });
 
-            makeBox(this, choices[5][0], this.viewCenter.x, this.viewCenter.y * 1.2, { callback: this.gotoScene, cbArgs: "titleScreen", cbScope: this, hoverText: "Test" });
+            makeBox(this, "Go home", this.viewCenter.x, this.viewCenter.y * 1.2, { callback: this.gotoScene, cbArgs: "parkingLot", cbScope: this, hoverText: "End the game" });
 
-            makeBox(this, choices[6][0], this.viewCenter.x, this.viewCenter.y * 1.4, { callback: this.gotoScene, cbArgs: "titleScreen", cbScope: this, hoverText: "Test" });
+            makeBox(this, "Check the board", this.viewCenter.x, this.viewCenter.y * 1.4, { callback: this.gotoScene, cbArgs: "fishBoard", cbScope: this, hoverText: "Go to [The Board]" });
 
-            makeBox(this, choices[3][0], this.viewCenter.x, this.viewCenter.y * 1.6, { callback: this.gotoScene, cbArgs: "titleScreen", cbScope: this, hoverText: "Test" });
+            makeBox(this, "Sneak past into the park", this.viewCenter.x, this.viewCenter.y * 1.6, { callback: this.gotoScene, cbArgs: "park", cbScope: this, hoverText: "Go to [The Park]" });
         }
     }
 }
@@ -457,7 +476,7 @@ class SouthDeep extends AdventureScene {
 
         makeBox(this, "Dive under", this.viewCenter.x, this.viewCenter.y * 1.4, { callback: this.gotoScene, cbArgs: "southDeep_dive", hoverText: "Search for fish" });
 
-        makeBox(this, "Swim to the rocks", this.viewCenter.x*0.3, this.viewCenter.y * 1.2, { callback: this.gotoScene, cbArgs: "rocks", hoverText: "Go to [Rock Wall]" });
+        makeBox(this, "Swim to the rocks", this.viewCenter.x*0.3, this.viewCenter.y * 1.2, { callback: this.gotoScene, cbArgs: "rockWall", hoverText: "Go to [Southern Rock Wall]" });
     }
 }
 
@@ -544,9 +563,9 @@ class SouthDeep_dive extends AdventureScene {
     }
 }
 
-class Rocks extends AdventureScene {
+class RockWall extends AdventureScene {
     constructor() {
-        super("rocks", "Southern Rock Wall", fishList);
+        super("rockWall", "Southern Rock Wall", fishList);
     }
 
     preload() {
@@ -563,6 +582,89 @@ class Rocks extends AdventureScene {
         makeBox(this, "Dive under", this.viewCenter.x, this.viewCenter.y, { callback: this.gotoScene, cbArgs: "rockWall_dive", hoverText: "Search for fish" });
 
         makeBox(this, "Swim to the deep", this.viewCenter.x * 1.6, this.viewCenter.y * 0.25, { callback: this.gotoScene, cbArgs: "southDeep", hoverText: "Go to [Southern Deep Waters]" });
+    }
+}
+
+class RockWall_dive extends AdventureScene {
+    constructor() {
+        super("rockWall_dive", "Southern Rock Wall (Diving)", fishList);
+    }
+
+    preload() {
+        this.load.path = "assets/";
+        this.load.image("UnderwaterRocks", "UnderwaterRocks.png");
+        this.load.image("testFish", "fish/TestFish.png");
+        this.localFish = {
+            "Hawaiian Flagtail": masterFishData["Hawaiian Flagtail"],
+            "Hawaiian Flagtail": masterFishData["Hawaiian Flagtail"],
+            "Hawaiian Flagtail": masterFishData["Hawaiian Flagtail"],
+            "Hawaiian Flagtail": masterFishData["Hawaiian Flagtail"],
+
+            "Christmas Wrasse": masterFishData["Christmas Wrasse"],
+            "Christmas Wrasse": masterFishData["Christmas Wrasse"],
+            "Christmas Wrasse": masterFishData["Christmas Wrasse"],
+
+            "Belted Wrasse": masterFishData["Belted Wrasse"],
+            "Belted Wrasse": masterFishData["Belted Wrasse"],
+            "Belted Wrasse": masterFishData["Belted Wrasse"],
+
+
+            "Bird Wrasse": masterFishData["Bird Wrasse"],
+            "Bird Wrasse": masterFishData["Bird Wrasse"],
+
+            "Manybar Goatfish": masterFishData["Manybar Goatfish"],
+            "Manybar Goatfish": masterFishData["Manybar Goatfish"],
+            "Manybar Goatfish": masterFishData["Manybar Goatfish"],
+
+            "Needlefish": masterFishData["Needlefish"],
+            "Needlefish": masterFishData["Needlefish"],
+
+            "Trumpetfish": masterFishData["Trumpetfish"],
+            "Trumpetfish": masterFishData["Trumpetfish"],
+        }
+
+        this.selectedFish = [];
+
+        let fishAmount = Phaser.Math.Between(6, 12);
+        console.log(`Amount: ${fishAmount}`);
+        for (let i = 0; i < fishAmount; i++) {
+            let selected = Phaser.Math.Between(0, Object.keys(this.localFish).length - 1);
+            let fish = Object.entries(this.localFish)[selected];
+            this.load.image(fish[0], `fish/${fish[0]}.png`);
+            this.selectedFish.push(fish[0]);
+            console.log(`${fish[0]} (${selected})`);
+        }
+    }
+
+    onEnter() {
+        this.bg = this.add.image(this.viewCenter.X, this.viewCenter.y, "UnderwaterRocks");
+        this.bg.setScale(5);
+        this.bg.setDepth(-1);
+        this.bg.x = this.viewCenter.x + this.bg.width / 2;
+
+        for (let fish of this.selectedFish) {
+            console.log(fish);
+            this.tweens.add({
+                targets: makeFish(this, fish, this.localFish[fish][0], this.localFish[fish][1], this.localFish[fish][2], this.localFish[fish][3], this.localFish[fish][4], this.localFish[fish][5]).setScale(this.localFish[fish][6]),
+                persist: true,
+                scale: '*= 0.5',
+                repeat: -1,
+                duration: Phaser.Math.Between(3000, 5000),
+                yoyo: true,
+                ease: "Sine.InOut",
+            });
+        }
+
+        makeBox(this, "Back to the surface", this.viewCenter.x * 1.6, this.viewCenter.y * 0.1, { callback: this.gotoScene, cbArgs: "rockWall", hoverText: "Catch your breath" });
+
+        this.debugText = this.add.text(this.viewCenter.x * 0.25, this.viewCenter.y * 1.75, "Debug");
+        this.debugText.setFontSize(this.s * 2.5);
+    }
+
+    update() {
+        //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
+        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
+
     }
 }
 
@@ -705,6 +807,227 @@ class Shelf extends AdventureScene {
     }
 }
 
+class Shelf_rockDive extends AdventureScene {
+    constructor() {
+        super("shelf_rockDive", "Northern Shelf (Rock Diving)", fishList);
+    }
+
+    preload() {
+        this.load.path = "assets/";
+        this.load.image("UnderwaterRocks", "UnderwaterRocks.png");
+        this.load.image("testFish", "fish/TestFish.png");
+        this.localFish = {
+            "Hawaiian Flagtail": masterFishData["Hawaiian Flagtail"],
+            "Hawaiian Flagtail": masterFishData["Hawaiian Flagtail"],
+
+            "Christmas Wrasse": masterFishData["Christmas Wrasse"],
+            "Christmas Wrasse": masterFishData["Christmas Wrasse"],
+
+            "Belted Wrasse": masterFishData["Belted Wrasse"],
+            "Belted Wrasse": masterFishData["Belted Wrasse"],
+
+            "Cleaner Wrasse": masterFishData["Cleaner Wrasse"],
+            "Cleaner Wrasse": masterFishData["Cleaner Wrasse"],
+            "Cleaner Wrasse": masterFishData["Cleaner Wrasse"],
+            "Cleaner Wrasse": masterFishData["Cleaner Wrasse"],
+
+            "Saddle Wrasse": masterFishData["Saddle Wrasse"],
+            "Saddle Wrasse": masterFishData["Saddle Wrasse"],
+            "Saddle Wrasse": masterFishData["Saddle Wrasse"],
+
+            "Bird Wrasse": masterFishData["Bird Wrasse"],
+            "Bird Wrasse": masterFishData["Bird Wrasse"],
+
+            "Blue Goatfish": masterFishData["Blue Goatfish"],
+            "Blue Goatfish": masterFishData["Blue Goatfish"],
+            "Blue Goatfish": masterFishData["Blue Goatfish"],
+
+            "Manybar Goatfish": masterFishData["Manybar Goatfish"],
+            "Manybar Goatfish": masterFishData["Manybar Goatfish"],
+
+            "Moorish Idol": masterFishData["Moorish Idol"],
+            "Moorish Idol": masterFishData["Moorish Idol"],
+            "Moorish Idol": masterFishData["Moorish Idol"],
+
+            "Raccoon Butterflyfish": masterFishData["Raccoon Butterflyfish"],
+            "Raccoon Butterflyfish": masterFishData["Raccoon Butterflyfish"],
+            "Raccoon Butterflyfish": masterFishData["Raccoon Butterflyfish"],
+
+            "Milletseed Butterflyfish": masterFishData["Milletseed Butterflyfish"],
+            "Milletseed Butterflyfish": masterFishData["Milletseed Butterflyfish"],
+
+            "Bluestripe Butterflyfish": masterFishData["Bluestripe Butterflyfish"],
+
+            "Needlefish": masterFishData["Needlefish"],
+
+            "Trumpetfish": masterFishData["Trumpetfish"],
+        }
+
+        this.selectedFish = [];
+
+        let fishAmount = Phaser.Math.Between(6, 12);
+        console.log(`Amount: ${fishAmount}`);
+        for (let i = 0; i < fishAmount; i++) {
+            let selected = Phaser.Math.Between(0, Object.keys(this.localFish).length - 1);
+            let fish = Object.entries(this.localFish)[selected];
+            this.load.image(fish[0], `fish/${fish[0]}.png`);
+            this.selectedFish.push(fish[0]);
+            console.log(`${fish[0]} (${selected})`);
+        }
+    }
+
+    onEnter() {
+        this.bg = this.add.image(this.viewCenter.X, this.viewCenter.y, "UnderwaterRocks");
+        this.bg.setScale(5);
+        this.bg.setDepth(-1);
+        this.bg.x = this.viewCenter.x + this.bg.width / 2;
+
+        for (let fish of this.selectedFish) {
+            console.log(fish);
+            this.tweens.add({
+                targets: makeFish(this, fish, this.localFish[fish][0], this.localFish[fish][1], this.localFish[fish][2], this.localFish[fish][3], this.localFish[fish][4], this.localFish[fish][5]).setScale(this.localFish[fish][6]),
+                persist: true,
+                scale: '*= 0.5',
+                repeat: -1,
+                duration: Phaser.Math.Between(3000, 5000),
+                yoyo: true,
+                ease: "Sine.InOut",
+            });
+        }
+
+        makeBox(this, "Back to the surface", this.viewCenter.x * 1.6, this.viewCenter.y * 0.1, { callback: this.gotoScene, cbArgs: "shelf", hoverText: "Catch your breath" });
+
+        this.debugText = this.add.text(this.viewCenter.x * 0.25, this.viewCenter.y * 1.75, "Debug");
+        this.debugText.setFontSize(this.s * 2.5);
+    }
+
+    update() {
+        //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
+        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
+
+    }
+}
+
+class shelf_shallowDive extends AdventureScene {
+    constructor() {
+        super("shelf_shallowDive", "Northern Shelf (Shallow Diving)", fishList);
+    }
+
+    preload() {
+        this.load.path = "assets/";
+        this.load.image("UnderwaterShallow", "UnderwaterShallow.png");
+        this.load.image("testFish", "fish/TestFish.png");
+        this.localFish = {
+            "Hawaiian Flagtail": masterFishData["Hawaiian Flagtail"],
+            "Hawaiian Flagtail": masterFishData["Hawaiian Flagtail"],
+
+            "Christmas Wrasse": masterFishData["Christmas Wrasse"],
+            "Christmas Wrasse": masterFishData["Christmas Wrasse"],
+
+            "Belted Wrasse": masterFishData["Belted Wrasse"],
+            "Belted Wrasse": masterFishData["Belted Wrasse"],
+
+            "Cleaner Wrasse": masterFishData["Cleaner Wrasse"],
+            "Cleaner Wrasse": masterFishData["Cleaner Wrasse"],
+            "Cleaner Wrasse": masterFishData["Cleaner Wrasse"],
+            "Cleaner Wrasse": masterFishData["Cleaner Wrasse"],
+
+            "Saddle Wrasse": masterFishData["Saddle Wrasse"],
+            "Saddle Wrasse": masterFishData["Saddle Wrasse"],
+            "Saddle Wrasse": masterFishData["Saddle Wrasse"],
+
+            "Bird Wrasse": masterFishData["Bird Wrasse"],
+            "Bird Wrasse": masterFishData["Bird Wrasse"],
+
+            "Blue Goatfish": masterFishData["Blue Goatfish"],
+            "Blue Goatfish": masterFishData["Blue Goatfish"],
+            "Blue Goatfish": masterFishData["Blue Goatfish"],
+
+            "Manybar Goatfish": masterFishData["Manybar Goatfish"],
+            "Manybar Goatfish": masterFishData["Manybar Goatfish"],
+
+            "Moorish Idol": masterFishData["Moorish Idol"],
+            "Moorish Idol": masterFishData["Moorish Idol"],
+            "Moorish Idol": masterFishData["Moorish Idol"],
+
+            "Raccoon Butterflyfish": masterFishData["Raccoon Butterflyfish"],
+            "Raccoon Butterflyfish": masterFishData["Raccoon Butterflyfish"],
+            "Raccoon Butterflyfish": masterFishData["Raccoon Butterflyfish"],
+
+            "Milletseed Butterflyfish": masterFishData["Milletseed Butterflyfish"],
+            "Milletseed Butterflyfish": masterFishData["Milletseed Butterflyfish"],
+
+            "Bluestripe Butterflyfish": masterFishData["Bluestripe Butterflyfish"],
+
+            "Needlefish": masterFishData["Needlefish"],
+
+            "Trumpetfish": masterFishData["Trumpetfish"],
+        }
+
+        this.selectedFish = [];
+
+        let fishAmount = Phaser.Math.Between(6, 12);
+        console.log(`Amount: ${fishAmount}`);
+        for (let i = 0; i < fishAmount; i++) {
+            let selected = Phaser.Math.Between(0, Object.keys(this.localFish).length - 1);
+            let fish = Object.entries(this.localFish)[selected];
+            this.load.image(fish[0], `fish/${fish[0]}.png`);
+            this.selectedFish.push(fish[0]);
+            console.log(`${fish[0]} (${selected})`);
+        }
+    }
+
+    onEnter() {
+        this.bg = this.add.image(this.viewCenter.X, this.viewCenter.y * 0.75, "UnderwaterShallow");
+        this.bg.setScale(6);
+        this.bg.setDepth(-1);
+        this.bg.setAlpha(0.85);
+        let oceanCurrent = this.tweens.add({
+            targets: this.bg,
+            persist: true,
+            x: "+= 1400",
+            //y: { value: '+= 200', duration: 4500 },
+            //alpha: { value: '-= 0.3', duration: 1100 },
+            repeat: -1,
+            duration: Phaser.Math.Between(1000, 5000),
+            yoyo: true,
+            ease: "Sine.InOut",
+
+            onRepeat() {
+                oceanCurrent.data[0]["duration"] = Phaser.Math.Between(2000, 5000);
+            }
+        });
+
+        let testBounds = {
+            x1: this.viewCenter.x,
+            x2: this.viewCenter.x * 2,
+            y1: this.viewCenter.y,
+            y2: this.viewCenter.y * 1.25
+        };
+
+        for (let fish of this.selectedFish) {
+            console.log(fish);
+            //console.log(this.localFish[fish][4])
+            makeFish(this, fish, this.localFish[fish][0], this.localFish[fish][1], this.localFish[fish][2], this.localFish[fish][3], this.localFish[fish][4], this.localFish[fish][5]).setScale(this.localFish[fish][6]).setDepth(-2);
+            // makeFish(this, "testFish",testBounds["x1"],testBounds["y1"],testBounds["x2"],testBounds["y2"],2000,1200);
+
+        }
+
+        let testFish =
+
+            makeBox(this, "Back to the surface", this.viewCenter.x * 1.6, this.viewCenter.y * 0.1, { callback: this.gotoScene, cbArgs: "shelf", hoverText: "Catch your breath" });
+
+        this.debugText = this.add.text(this.viewCenter.x * 0.25, this.viewCenter.y * 1.75, "Debug");
+        this.debugText.setFontSize(this.s * 2.5);
+    }
+
+    update() {
+        //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
+        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
+
+    }
+}
+
 class TitleScreen extends Phaser.Scene {
     constructor() {
         super('titleScreen')
@@ -714,8 +1037,30 @@ class TitleScreen extends Phaser.Scene {
         this.add.text(50,100, "Click anywhere to begin.").setFontSize(20);
         this.input.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0,0,0);
-            this.time.delayedCall(1000, () => this.scene.start("northDeep_dive"));
+            this.time.delayedCall(1000, () => this.scene.start("shore"));
         });
+    }
+}
+
+class ParkingLot extends AdventureScene {
+    constructor() {
+        super("parkingLot", "The Parking Lot", fishList);
+    }
+
+    preload() {
+        this.load.path = "assets/";
+
+        this.load.image("parkingLot", "ParkingLot.png");
+    }
+
+    onEnter() {
+        this.bg = this.add.image(this.w / 2 - this.w / 7, this.h / 2, "parkingLot");
+        this.bg.setScale(2);
+        this.bg.setDepth(-1);
+
+        
+        makeBox(this, dialogue[3], this.viewCenter.x, this.viewCenter.y * 0.75);
+        makeBox(this, "Continue", this.viewCenter.x, this.viewCenter.y * 1.5, { callback: this.gotoScene, cbArgs: "outro", cbScope: this, hoverText: "" });
     }
 }
 
@@ -724,9 +1069,8 @@ class Outro extends Phaser.Scene {
         super('outro');
     }
     create() {
-        this.add.text(50, 50, "That's all!").setFontSize(50);
-        this.add.text(50, 100, "Click anywhere to restart.").setFontSize(20);
-        this.input.on('pointerdown', () => this.scene.start('intro'));
+        this.add.text(50, 50, "Thanks for playing!").setFontSize(50);
+        this.add.text(50, 100, `You found ${fishList["[numFound]"]} out of ${fishList["[knownTotal]"]} fish`).setFontSize(50);
     }
 }
 
@@ -757,7 +1101,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [TitleScreen, FishBoard, Shore, Shallow, Shallow_dive, SouthDeep, SouthDeep_dive, Rocks, NorthDeep, NorthDeep_dive, Shelf, Outro],
+    scene: [TitleScreen, FishBoard, Shore, Shallow, Shallow_dive, SouthDeep, SouthDeep_dive, RockWall, RockWall_dive, NorthDeep, NorthDeep_dive, Shelf, Shelf_rockDive, shelf_shallowDive, ParkingLot, Outro],
     title: "Adventure Game",
 });
 

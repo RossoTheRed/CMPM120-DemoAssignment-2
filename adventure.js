@@ -14,6 +14,8 @@
  *
  * @extends {Phaser.Scene}
  */
+
+let totalTime = 0;
 class AdventureScene extends Phaser.Scene {
 
     /**
@@ -31,10 +33,11 @@ class AdventureScene extends Phaser.Scene {
      * @param {string} name A human-readable name shown in the UI (e.g. `"The Tunnel"`).
      * @param {dictionary} fishList The number of fish found.
      */
-    constructor(key, name, fishList) {
+    constructor(key, name, fishList, time) {
         super(key);
         this.name = name;
         this.goalData = fishList;
+        this.curTime = time;
     }
 
     /**
@@ -123,7 +126,7 @@ class AdventureScene extends Phaser.Scene {
             //     }
             // }
 
-        this.listText.setText("Test")
+        this.listText.setText("Check the board!")
             .setStyle({ fontSize: `${1.5 * this.s}px`, color: this.textColor})
             .setColor(this.textColor)
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
@@ -194,6 +197,10 @@ class AdventureScene extends Phaser.Scene {
 
         this.onEnter();
 
+    }
+
+    checkTime() {
+        
     }
 
     /**
@@ -320,6 +327,7 @@ class AdventureScene extends Phaser.Scene {
         this.time.delayedCall(this.transitionDuration, () => {
             this.scene.start(key, { inventory: this.inventory });
         });
+        totalTime += this.curTime;
     }
 
     /**
