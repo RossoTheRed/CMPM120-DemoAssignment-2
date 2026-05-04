@@ -42,8 +42,9 @@ let fishList = {
     "Black Foot Limpet": false,
     "Rock Crab": false,
     "Shingle Urchin": false,
-    "Hawaiian Whitespotted Toby Pufferfish": false,
+    "Whitespotted Toby Pufferfish": false,
     "Green Sea Turtle": false,
+    "Leopard Shark": false,
 };
 
 let masterFishData = {
@@ -127,6 +128,15 @@ function makeFish(scope, image, x1, y1, x2, y2, speedX, speedY) {
     fish.setInteractive({ useHandCursor: true });
     fish.on("pointerup", () => {
         findFish(scope, image);
+        scope.tweens.add({
+            targets: fish,
+            scale: 0,
+            duration: 1000,
+
+            onComplete() {
+                fish.destroy(true);
+            }
+        });
     });
 
     scope.tweens.add({
@@ -441,15 +451,6 @@ class Shallow_dive extends AdventureScene {
         let testFish = 
 
         makeBox(this, "Back to the surface", this.viewCenter.x*1.6, this.viewCenter.y*0.1, { callback: this.gotoScene, cbArgs: "shallow", hoverText: "Catch your breath" });
-
-        this.debugText = this.add.text(this.viewCenter.x*0.25,this.viewCenter.y*1.75,"Debug");
-        this.debugText.setFontSize(this.s*2.5);
-    }
-
-    update() {
-        //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
-        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
-
     }
 }
 
@@ -550,16 +551,8 @@ class SouthDeep_dive extends AdventureScene {
         }
         
         makeBox(this, "Back to the surface", this.viewCenter.x * 1.6, this.viewCenter.y * 0.1, { callback: this.gotoScene, cbArgs: "southDeep", hoverText: "Catch your breath" });
-
-        this.debugText = this.add.text(this.viewCenter.x * 0.25, this.viewCenter.y * 1.75, "Debug");
-        this.debugText.setFontSize(this.s * 2.5);
     }
 
-    update() {
-        //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
-        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
-
-    }
 }
 
 class RockWall extends AdventureScene {
@@ -771,14 +764,6 @@ class NorthDeep_dive extends AdventureScene {
 
         makeBox(this, "Back to the surface", this.viewCenter.x * 1.6, this.viewCenter.y * 0.1, { callback: this.gotoScene, cbArgs: "northDeep", hoverText: "Catch your breath" });
 
-        this.debugText = this.add.text(this.viewCenter.x * 0.25, this.viewCenter.y * 1.75, "Debug");
-        this.debugText.setFontSize(this.s * 2.5);
-    }
-
-    update() {
-        //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
-        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
-
     }
 }
 
@@ -895,15 +880,6 @@ class Shelf_rockDive extends AdventureScene {
         }
 
         makeBox(this, "Back to the surface", this.viewCenter.x * 1.6, this.viewCenter.y * 0.1, { callback: this.gotoScene, cbArgs: "shelf", hoverText: "Catch your breath" });
-
-        this.debugText = this.add.text(this.viewCenter.x * 0.25, this.viewCenter.y * 1.75, "Debug");
-        this.debugText.setFontSize(this.s * 2.5);
-    }
-
-    update() {
-        //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
-        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
-
     }
 }
 
@@ -1015,15 +991,6 @@ class shelf_shallowDive extends AdventureScene {
         let testFish =
 
             makeBox(this, "Back to the surface", this.viewCenter.x * 1.6, this.viewCenter.y * 0.1, { callback: this.gotoScene, cbArgs: "shelf", hoverText: "Catch your breath" });
-
-        this.debugText = this.add.text(this.viewCenter.x * 0.25, this.viewCenter.y * 1.75, "Debug");
-        this.debugText.setFontSize(this.s * 2.5);
-    }
-
-    update() {
-        //this.fish.setAlpha(0.75 - (this.fish.y / this.h));
-        this.debugText.text = `Mouse: (${Math.trunc(this.input.activePointer.x)}, ${Math.trunc(this.input.activePointer.y)})`;
-
     }
 }
 

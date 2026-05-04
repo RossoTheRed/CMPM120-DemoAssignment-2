@@ -134,8 +134,8 @@ class AdventureScene extends Phaser.Scene {
             .on("wheel", function (pointer,deltaX,deltaY,deltaZ) {
                 this.y -= deltaY;
 
-                if (this.y < -245) {
-                    this.y = -245;
+                if (this.y < -255) {
+                    this.y = -255;
                 } else if (this.y > 360) {
                     this.y = 360;
                 }
