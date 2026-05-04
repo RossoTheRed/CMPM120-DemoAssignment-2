@@ -67,6 +67,7 @@ class AdventureScene extends Phaser.Scene {
         this.textColor = 0x000001; // #000001
 
         this.viewCenter = { x: this.w / 2 - this.w / 8, y: this.h / 2 };
+        this.defaultTextData = { textStyle: "normal", textColor: 0x00000F, textSize: this.s * 2, textAlignment: "center", textWrapLength: 50 * this.s };
 
 
 
@@ -103,19 +104,19 @@ class AdventureScene extends Phaser.Scene {
             .setStyle({ fontSize: `${3 * this.s}px`, color: this.textColor})
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
         this.listText = this.add.text(this.w * 0.75 + this.s, this.listTitle.y + this.listTitle.height)
-            let totalText = "";
-            for (let [fish, found] of Object.entries(this.goalData)) {
-                if (fish.includes("[") == false) {
-                    if (found == true) {
-                        totalText += `[x]`;
-                    } else {
-                        totalText += `[ ]`;
-                    }
-                    totalText += `${fish}\n`
-                }
-            }
+            // let totalText = "";
+            // for (let [fish, found] of Object.entries(this.goalData)) {
+            //     if (fish.includes("[") == false) {
+            //         if (found == true) {
+            //             totalText += `[x]`;
+            //         } else {
+            //             totalText += `[ ]`;
+            //         }
+            //         totalText += `${fish}\n`
+            //     }
+            // }
 
-            this.listText.setText(totalText)
+        this.listText.setText("Test")
             .setStyle({ fontSize: `${1.5 * this.s}px`, color: this.textColor})
             .setColor(this.textColor)
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
